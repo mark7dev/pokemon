@@ -10,6 +10,7 @@ let initialData = {
 
 let GET_POKEMON = "GET_POKEMON"
 let GET_POKEMON_ERROR = "GET_POKEMON"
+let ADD_POKEMON = "ADD_POKEMON"
 
 //Reducer
 export default function reducer(state = initialData, action) {
@@ -18,6 +19,8 @@ export default function reducer(state = initialData, action) {
             return {...state, pokemon: action.payload, exist: true}
         case GET_POKEMON_ERROR:
             return {...state, message: action.payload, exist: false}
+        case ADD_POKEMON:
+            return {...state, ...action.payload}
         default:
             return state
     }
@@ -27,12 +30,25 @@ export default function reducer(state = initialData, action) {
 export let getPokemonsAction = (pokemon) => (dispatch, getState) => {
     return axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`)
                 .then(response => {
+                    console.log(response);
+                    
                     dispatch({
                         type: GET_POKEMON,
                         payload: response.data
                     })
+                    // .then(() => {
+                    //     let newPokemon = getState().pokemon
+                    //     let pokemons = getState().pokemons
+                    //     pokemons.push(newPokemon)
+                    //     dispatch({
+                    //         type: ADD_POKEMON,
+                    //         payload: {pokemons: [...pokemons]}
+                    //     })
+
+                    // })
                 })
                 .catch(error => {
+                    console.log(error);
                     dispatch({
                         type: GET_POKEMON_ERROR,
                         payload: error.response.data
