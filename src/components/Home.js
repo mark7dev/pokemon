@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { connect } from 'react-redux'
 import { addPokemonAction } from '../redux/pokemonsDuck'
+import './Home.css'
 
 function Home({pokemons, addPokemonAction}) {
 
@@ -9,19 +10,21 @@ function Home({pokemons, addPokemonAction}) {
         disabledBtn: true
     })
 
+    const cleanInput = () => {
+        saveHomeState({nameId: ''})
+        document.getElementById("nameId").value = ""
+    }
+
     const getPokemon = () => {
         let param = homeState.nameId.toLowerCase()
         addPokemonAction(param)
-        .then(response => {
-            saveHomeState({nameId: ''})
-            document.getElementById("nameId").value = ""
+        .then(() => {
+            cleanInput()
         })
-        .catch(error => {
-            console.log('ERROR!');
+        .catch(() => {
+            cleanInput()
+            alert('NOT FOUND!')
         })
-        // if(pokemons.exist === false) {
-        //     console.log('ERROR!');
-        // }
     }
 
     const handleChange = e => {
@@ -31,8 +34,22 @@ function Home({pokemons, addPokemonAction}) {
 
     return (
         <Fragment>
-            <input id="nameId" type="text" onChange={handleChange}></input>
-            <button onClick={getPokemon} disabled={!homeState.nameId}>CATCH POKEMON!</button>
+            <h1 className="title">POKEMONS</h1>
+            <div className="search__container">
+                <input id="nameId" type="text" onChange={handleChange}></input>
+                <button onClick={getPokemon} disabled={!homeState.nameId} className="btnCatch">CATCH POKEMON!</button>
+            </div>
+            <div className="cards__container">
+                {pokemons.array.map(pokemon => (
+                    <div className="card" key={pokemon.id}>
+                        <img src={pokemon.sprites.front_default}></img>
+                        <div className="info">
+                            <h5>Id: #{pokemon.id}</h5>
+                            <h5>Name: {pokemon.name}</h5>
+                        </div>
+                    </div>
+                ))}      
+            </div>
         </Fragment>
     )
 }

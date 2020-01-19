@@ -26,7 +26,6 @@ export let addPokemonAction = (pokemon) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`)
             .then(response => {
-                console.log(response);
                 let newPokemon = response.data
                 let pokemonsArray = getState().pokemons.array
                 pokemonsArray.push(newPokemon)
