@@ -12,11 +12,16 @@ function Home({pokemons, addPokemonAction}) {
     const getPokemon = () => {
         let param = homeState.nameId.toLowerCase()
         addPokemonAction(param)
-        saveHomeState({nameId: ''})
-        document.getElementById("nameId").value = ""
-        if(pokemons.exist === false) {
-            alert('ERROR!!')
-        }
+        .then(response => {
+            saveHomeState({nameId: ''})
+            document.getElementById("nameId").value = ""
+        })
+        .catch(error => {
+            console.log('ERROR!');
+        })
+        // if(pokemons.exist === false) {
+        //     console.log('ERROR!');
+        // }
     }
 
     const handleChange = e => {

@@ -3,7 +3,6 @@ import axios from 'axios'
 //Constants
 let initialData = {
     array: [],
-    exist: false,
     message: ""
 }
 
@@ -14,32 +13,37 @@ let ADD_POKEMON = "ADD_POKEMON"
 export default function reducer(state = initialData, action) {
     switch(action.type) {
         case GET_POKEMON_ERROR:
-            return {...state, message: action.payload, exist: false}
+            return {...state, message: action.payload}
         case ADD_POKEMON:
-            return {...state, ...action.payload, exist: true}
+            return {...state, ...action.payload}
         default:
             return state
     }
 }
 
-//AUX
+//Actions
 export let addPokemonAction = (pokemon) => (dispatch, getState) => {
-    return axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`)
-                .then(response => {
-                    console.log(response);
-                    let newPokemon = response.data
-                    let pokemonsArray = getState().pokemons.array
-                    pokemonsArray.push(newPokemon)
-                    dispatch({
-                        type: ADD_POKEMON,
-                        payload: {array: [...pokemonsArray]}
-                    })
+    return new Promise((resolve, reject) => {
+        axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`)
+            .then(response => {
+                console.log(response);
+                let newPokemon = response.data
+                let pokemonsArray = getState().pokemons.array
+                pokemonsArray.push(newPokemon)
+                dispatch({
+                    type: ADD_POKEMON,
+                    payload: {array: [...pokemonsArray]}
                 })
-                .catch(error => {
-                    console.log(error);
-                    dispatch({
-                        type: GET_POKEMON_ERROR,
-                        payload: error.response.data
-                    })
+                resolve()
+            })
+            .catch(error => {
+                console.log(error);
+                dispatch({
+                    type: GET_POKEMON_ERROR,
+                    payload: error.response.data
                 })
+                reject()
+            })
+    })
+    
 }
